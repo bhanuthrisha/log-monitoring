@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Incident Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+        tr:hover { background-color: #f5f5f5; }
+        .critical { color: red; font-weight: bold; }
+        .warning { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>Recent Incidents</h1>
+    {% if incidents %}
+    <table>
+        <tr>
+            <th>Time</th>
+            <th>Score</th>
+            <th>Log Excerpt</th>
+            <th>Status</th>
+        </tr>
+        {% for incident in incidents %}
+        <tr class="{{ 'critical' if incident['prediction_score'] > 0.9 else 'warning' }}">
+            <td>{{ incident['timestamp'] }}</td>
+            <td>{{ "%.2f"|format(incident['prediction_score']) }}</td>
+            <td>{{ incident['log_text'][:100] }}{% if incident['log_text']|length > 100 %}...{% endif %}</td>
+            <td>{{ 'Resolved' if incident['resolved'] else 'Active' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No incidents found</p>
+    {% endif %}
+</body>
+</html>
